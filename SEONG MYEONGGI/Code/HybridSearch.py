@@ -142,7 +142,7 @@ def hybrid_retrieve(query_str, size, sparse_weight=0.5):
     return final_results
 
 es_username = "elastic"
-es_password = "JMsFtIda3zAACqcQO=ol"
+es_password = "BoZBC0e2MRmvTnKaOkZ6"
 
 # Elasticsearch client 생성
 es = Elasticsearch(['https://localhost:9200'], basic_auth=(es_username, es_password), ca_certs="./elasticsearch-8.8.0/config/certs/http_ca.crt")
