@@ -215,6 +215,7 @@ def mmr(query_vector, doc_vectors, doc_ids, lambda_param=0.5, k=5):
 ### Leader Board
 #### Public Score
 <img src="./img/public score.png">
+
 #### Private Score
 <img src="./img/private score.png">
 
