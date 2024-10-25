@@ -16,13 +16,13 @@
 
 ### Requirements
 
-pandas==2.1.4
-numpy==1.23.5
-tqdm==4.66.1
-sentence_transformers==2.2.2
-elasticsearch==8.8.0
-openai==1.7.2
-transformers[torch]==4.35.2
+- pandas==2.1.4
+- numpy==1.23.5
+- tqdm==4.66.1
+- sentence_transformers==2.2.2
+- elasticsearch==8.8.0
+- openai==1.7.2
+- transformers[torch]==4.35.2
 
 ## 1. Competiton Info
 
@@ -115,69 +115,108 @@ def calc_map(gt, pred):   
 
 다운로드 받은 data.tar.gz 에 포함된 eval.jsonl을 사용하여 결과물 생성하고, 이 결과물을 제출하면 리더보더에 반영됩니다.
 
-## 2. Components
+## 2. Hypothesis Test
+### 2-1. 라이브러리 버전이 성능 향상에 영향을 미칠까?
+<img src="/Users/seongmyeong-gi/Desktop/upstage-ai-advanced-ir6-private/img/6page.png">
 
-### Directory
+### 2-2. 데이터를 분류해서 검색할 경우 성능이 향상될까?
+<img src="/Users/seongmyeong-gi/Desktop/upstage-ai-advanced-ir6-private/img/8page.png">
 
-- _Insert your directory structure_
+### 2-3. 일상대화 내용 검출이 결과에 영향을 미칠까?
+<img src="/Users/seongmyeong-gi/Desktop/upstage-ai-advanced-ir6-private/img/9page.png">
 
-e.g.
+### 2-4. 대화내용을 좋게 만들면 성능이 오를까?
+<img src="/Users/seongmyeong-gi/Desktop/upstage-ai-advanced-ir6-private/img/10page.png">
+
+### 2-5. 문서 요약이 결과에 영향을 주는가?
+<img src="/Users/seongmyeong-gi/Desktop/upstage-ai-advanced-ir6-private/img/12page.png">
+
+
+
+## 3. Improvement of IR Algorithm
+
+### 3-1. Hybrid Retrieval
+Hybrid Retrieval은 Sparse와 Dense Retrieval 방식을 결합하여 각 방식의 단점을 보완하고 장점을 극대화합니다. 예를 들어, Sparse Retrieval로 1차 필터링을 수행한 후, Dense Retrieval로 최종 결과를 선정하는 방식이 사용될 수 있습니다. 이러한 접근 방식은 키워드 매칭과 의미적 유사성을 동시에 고려하여 보다 정확하고 관련성 높은 검색 결과를 제공합니다.
+<img src="/Users/seongmyeong-gi/Desktop/upstage-ai-advanced-ir6-private/img/14page.png">
+
+#### 장점
+- 포괄적인 검색 결과: 키워드와 의미를 모두 고려하여 보다 완전한 검색 결과 제공.
+- 유연성: 다양한 데이터 유형과 시나리오에 적용 가능.
+- 효율성 향상: 서로 다른 알고리즘의 강점을 결합하여 성능 향상.
+
+```python
+def hybrid_retrieve(query_str, size, sparse_weight=0.5):
+    sparse_results = sparse_retrieve(query_str, size) # sparse 검색 수행
+    dense_results = dense_retrieve(query_str, size) # dense 검색 수행
+    
+    merged_results = {} # 결과 병합을 위한 딕셔너리 생성
+    
+    for hit in sparse_results['hits']['hits']:
+        doc_id = hit['_id']
+        sparse_score = hit['_score']
+        merged_results[doc_id] = {
+            'sparse_score': sparse_score,
+            'dense_score': 0,
+            '_source': hit['_source']
+        } # sparse 결과 처리
+    
+    for hit in dense_results['hits']['hits']:
+        doc_id = hit['_id']
+        dense_score = hit['_score']
+        if doc_id in merged_results:
+            merged_results[doc_id]['dense_score'] = dense_score
+        else:
+            merged_results[doc_id] = {
+                'sparse_score': 0,
+                'dense_score': dense_score,
+                '_source': hit['_source']
+            } # dense 결과 처리
+    
+    # 최종 점수 계산 및 정렬(생략)
+    # 상위 size개 결과 반환(생략)
+    # Elasticsearch 결과 형식에 맞게 변환(생략)
+    
+    return final_results
 ```
-├── code
-│   ├── jupyter_notebooks
-│   │   └── model_train.ipynb
-│   └── train.py
-├── docs
-│   ├── pdf
-│   │   └── (Template) [패스트캠퍼스] Upstage AI Lab 1기_그룹 스터디 .pptx
-│   └── paper
-└── input
-    └── data
-        ├── eval
-        └── train
+
+### MMR(Maximal Marginal Relevance)
+Maximum Marginal Relevance (MMR)는 정보 검색 및 문서 요약에서 사용되는 알고리즘으로, 검색 결과의 관련성과 다양성을 동시에 고려하는 방법입니다. MMR은 쿼리에 대해 관련성이 높은 문서를 선택하면서도, 이미 선택된 문서들과는 상이한 내용을 가진 문서를 선호하여 결과의 다양성을 보장합니다.
+
+<img src="/Users/seongmyeong-gi/Desktop/upstage-ai-advanced-ir6-private/img/15page.png">
+
+```python
+def mmr(query_vector, doc_vectors, doc_ids, lambda_param=0.5, k=5):
+    selected = []
+    unselected = list(range(len(doc_vectors)))
+    
+    while len(selected) < k:
+        mmr_score = {}
+        for i in unselected:
+            relevance = cosine_similarity([query_vector], [doc_vectors[i]])[0][0]
+            diversity = min([cosine_similarity([doc_vectors[i]], [doc_vectors[j]])[0][0] for j in selected]) if selected else 0
+            mmr_score[i] = lambda_param * relevance - (1 - lambda_param) * diversity
+        
+        selected_idx = max(mmr_score, key=mmr_score.get)
+        selected.append(selected_idx)
+        unselected.remove(selected_idx)
+    
+    return [doc_ids[i] for i in selected]
 ```
+### Topk 순서변경 및 개선
+<img src="/Users/seongmyeong-gi/Desktop/upstage-ai-advanced-ir6-private/img/16page.png">
 
-## 3. Data descrption
+### Solar Embedding 모델
+<img src="/Users/seongmyeong-gi/Desktop/upstage-ai-advanced-ir6-private/img/17.png">
 
-### Dataset overview
-
-- _Explain using data_
-
-### EDA
-
-- _Describe your EDA process and step-by-step conclusion_
-
-### Data Processing
-
-- _Describe data processing process (e.g. Data Labeling, Data Cleaning..)_
-
-## 4. Modeling
-
-### Model descrition
-
-- _Write model information and why your select this model_
-
-### Modeling Process
-
-- _Write model train and test process with capture_
+## 4. About the BGE-m3
+<img src="/Users/seongmyeong-gi/Desktop/upstage-ai-advanced-ir6-private/img/23page.png">
 
 ## 5. Result
-
 ### Leader Board
-
-- _Insert Leader Board Capture_
-- _Write rank and score_
+#### Public Score
+<img src="/Users/seongmyeong-gi/Desktop/upstage-ai-advanced-ir6-private/img/public score.png">
+#### Private Score
+<img src="/Users/seongmyeong-gi/Desktop/upstage-ai-advanced-ir6-private/img/private score.png">
 
 ### Presentation
-
-- _Insert your presentaion file(pdf) link_
-
-## etc
-
-### Meeting Log
-
-- _Insert your meeting log link like Notion or Google Docs_
-
-### Reference
-
-- _Insert related reference_
+- ![PPT]()
