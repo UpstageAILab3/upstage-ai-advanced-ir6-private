@@ -117,19 +117,19 @@ def calc_map(gt, pred):   
 
 ## 2. Hypothesis Test
 ### 2-1. 라이브러리 버전이 성능 향상에 영향을 미칠까?
-<img src="/Users/seongmyeong-gi/Desktop/upstage-ai-advanced-ir6-private/img/6page.png">
+<img src="./img/6page.png">
 
 ### 2-2. 데이터를 분류해서 검색할 경우 성능이 향상될까?
-<img src="/Users/seongmyeong-gi/Desktop/upstage-ai-advanced-ir6-private/img/8page.png">
+<img src="./img/8page.png">
 
 ### 2-3. 일상대화 내용 검출이 결과에 영향을 미칠까?
-<img src="/Users/seongmyeong-gi/Desktop/upstage-ai-advanced-ir6-private/img/9page.png">
+<img src="./img/9page.png">
 
 ### 2-4. 대화내용을 좋게 만들면 성능이 오를까?
-<img src="/Users/seongmyeong-gi/Desktop/upstage-ai-advanced-ir6-private/img/10page.png">
+<img src="./img/10page.png">
 
 ### 2-5. 문서 요약이 결과에 영향을 주는가?
-<img src="/Users/seongmyeong-gi/Desktop/upstage-ai-advanced-ir6-private/img/12page.png">
+<img src="./img/12page.png">
 
 
 
@@ -137,7 +137,7 @@ def calc_map(gt, pred):   
 
 ### 3-1. Hybrid Retrieval
 Hybrid Retrieval은 Sparse와 Dense Retrieval 방식을 결합하여 각 방식의 단점을 보완하고 장점을 극대화합니다. 예를 들어, Sparse Retrieval로 1차 필터링을 수행한 후, Dense Retrieval로 최종 결과를 선정하는 방식이 사용될 수 있습니다. 이러한 접근 방식은 키워드 매칭과 의미적 유사성을 동시에 고려하여 보다 정확하고 관련성 높은 검색 결과를 제공합니다.
-<img src="/Users/seongmyeong-gi/Desktop/upstage-ai-advanced-ir6-private/img/14page.png">
+<img src="./img/14page.png">
 
 #### 장점
 - 포괄적인 검색 결과: 키워드와 의미를 모두 고려하여 보다 완전한 검색 결과 제공.
@@ -182,7 +182,7 @@ def hybrid_retrieve(query_str, size, sparse_weight=0.5):
 ### MMR(Maximal Marginal Relevance)
 Maximum Marginal Relevance (MMR)는 정보 검색 및 문서 요약에서 사용되는 알고리즘으로, 검색 결과의 관련성과 다양성을 동시에 고려하는 방법입니다. MMR은 쿼리에 대해 관련성이 높은 문서를 선택하면서도, 이미 선택된 문서들과는 상이한 내용을 가진 문서를 선호하여 결과의 다양성을 보장합니다.
 
-<img src="/Users/seongmyeong-gi/Desktop/upstage-ai-advanced-ir6-private/img/15page.png">
+<img src="./img/15page.png">
 
 ```python
 def mmr(query_vector, doc_vectors, doc_ids, lambda_param=0.5, k=5):
@@ -203,20 +203,20 @@ def mmr(query_vector, doc_vectors, doc_ids, lambda_param=0.5, k=5):
     return [doc_ids[i] for i in selected]
 ```
 ### Topk 순서변경 및 개선
-<img src="/Users/seongmyeong-gi/Desktop/upstage-ai-advanced-ir6-private/img/16page.png">
+<img src="./img/16page.png">
 
 ### Solar Embedding 모델
-<img src="/Users/seongmyeong-gi/Desktop/upstage-ai-advanced-ir6-private/img/17.png">
+<img src="./img/17.png">
 
 ## 4. About the BGE-m3
-<img src="/Users/seongmyeong-gi/Desktop/upstage-ai-advanced-ir6-private/img/23page.png">
+<img src="./img/23page.png">
 
 ## 5. Result
 ### Leader Board
 #### Public Score
-<img src="/Users/seongmyeong-gi/Desktop/upstage-ai-advanced-ir6-private/img/public score.png">
+<img src="./img/public score.png">
 #### Private Score
-<img src="/Users/seongmyeong-gi/Desktop/upstage-ai-advanced-ir6-private/img/private score.png">
+<img src="./img/private score.png">
 
 ### Presentation
-- ![PPT]()
+- [Presentation](https://github.com/UpstageAILab3/upstage-ai-advanced-ir6-private/blob/main/Upstage%20AI%20Lab%203%EA%B8%B0_AI%20%EC%8B%A4%EC%A0%84%ED%95%99%EC%8A%B5%20%EA%B2%BD%EC%A7%84%EB%8C%80%ED%9A%8C_%EB%B0%9C%ED%91%9C%EC%9E%90%EB%A3%8C_IR_6%EC%A1%B0.pdf)
