@@ -1,3 +1,35 @@
+- [Scientific Knowledge Question Answering | 과학 지식 질의 응답 시스템 구축](#scientific-knowledge-question-answering--과학-지식-질의-응답-시스템-구축)
+  - [Team](#team)
+  - [0. Overview](#0-overview)
+    - [Environment](#environment)
+    - [Requirements](#requirements)
+  - [1. Competiton Info](#1-competiton-info)
+    - [Overview](#overview)
+    - [Evaluation Metric](#evaluation-metric)
+  - [2. Hypothesis Test](#2-hypothesis-test)
+    - [2-1. 라이브러리 버전이 성능 향상에 영향을 미칠까?](#2-1-라이브러리-버전이-성능-향상에-영향을-미칠까)
+    - [2-2. 데이터를 분류해서 검색할 경우 성능이 향상될까?](#2-2-데이터를-분류해서-검색할-경우-성능이-향상될까)
+    - [2-3. 일상대화 내용 검출이 결과에 영향을 미칠까?](#2-3-일상대화-내용-검출이-결과에-영향을-미칠까)
+    - [2-4. 대화내용을 좋게 만들면 성능이 오를까?](#2-4-대화내용을-좋게-만들면-성능이-오를까)
+    - [2-5. 문서 요약이 결과에 영향을 주는가?](#2-5-문서-요약이-결과에-영향을-주는가)
+  - [3. Improvement of IR Algorithm](#3-improvement-of-ir-algorithm)
+    - [3-1. Hybrid Retrieval](#3-1-hybrid-retrieval)
+      - [장점](#장점)
+    - [MMR(Maximal Marginal Relevance)](#mmrmaximal-marginal-relevance)
+    - [Topk 순서변경 및 개선](#topk-순서변경-및-개선)
+    - [Solar Embedding 모델](#solar-embedding-모델)
+  - [4. About the BGE-m3](#4-about-the-bge-m3)
+  - [5. Result](#5-result)
+    - [Leader Board](#leader-board)
+      - [Public Score](#public-score)
+      - [Private Score](#private-score)
+    - [Presentation](#presentation)
+
+<br>
+
+---
+<br>
+
 # Scientific Knowledge Question Answering | 과학 지식 질의 응답 시스템 구축
 ## Team
 
@@ -73,7 +105,7 @@ RAG는 질문에 적합한 레퍼런스 추출을 위해 검색엔진을 활용�
 자, 이제 여러분만의 RAG 시스템을 구축하러 가보실까요~?
 
 
-## Evaluation Metric
+### Evaluation Metric
 
 사용자가 입력한 질문에 대해서 답변을 얼마나 잘 생성했는지 정량화하는 작업은 매우 고난도의 작업입니다.
 
